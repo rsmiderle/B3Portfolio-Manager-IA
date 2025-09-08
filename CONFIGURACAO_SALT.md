@@ -77,11 +77,11 @@ salt = ''.join(secrets.choice(chars) for _ in range(64))
 print(salt)
 ```
 
-## Valor Padrão
+## Requisito Obrigatório
 
-Se a variável `ANONYMIZATION_SALT` não estiver definida, o sistema usará um valor padrão (`DEFAULT_SALT_CHANGE_IN_PRODUCTION`). 
+A variável de ambiente `ANONYMIZATION_SALT` é **obrigatória** para o funcionamento do sistema.
 
-**IMPORTANTE**: Este valor padrão NÃO deve ser usado em produção, pois comprometeria a segurança da anonimização.
+**IMPORTANTE**: Se esta variável não for definida, a aplicação não iniciará corretamente e a criação de novos usuários falhará com um erro de configuração de segurança. Esta é uma medida de proteção para evitar que o sistema opere em um estado inseguro.
 
 ## Migração de Dados
 
@@ -93,10 +93,6 @@ Se você já tem dados no sistema e está implementando o salt via variável de 
 
 ## Verificação da Configuração
 
-Para verificar se a variável de ambiente está configurada corretamente, execute o script de validação:
+Para verificar se a variável de ambiente está configurada corretamente, você pode inspecionar as variáveis de ambiente do seu sistema ou, durante a execução, observar os logs da aplicação em caso de erro na inicialização.
 
-```bash
-python validar_anonimizacao.py
-```
-
-O script informará se está usando o valor da variável de ambiente ou o valor padrão.
+O script `validar_anonimizacao.py` também pode ser usado para testes relacionados à anonimização.
