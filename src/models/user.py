@@ -31,9 +31,11 @@ class User(db.Model, UserMixin):
     
     def generate_hash_id(self):
         """Gera um identificador anonimizado baseado no Google ID usando salt da variável de ambiente"""
-        # Obtém o salt da variável de ambiente ou usa um valor padrão se não estiver definido
-        salt = os.environ.get('ANONYMIZATION_SALT', 'DEFAULT_SALT_CHANGE_IN_PRODUCTION')
-        
+        # Obtém o salt da variável de ambiente. Lança um erro se não estiver definido.
+        salt = os.environ.get('ANONYMIZATION_SALT')
+        if not salt or salt == 'DEFAULT_SALT_CHANGE_IN_PRODUCTION':
+            raise ValueError("ANONYMIZATION_SALT não está definida ou está usando o valor padrão inseguro. Esta variável é obrigatória para a segurança do sistema.")
+
         # Combina o Google ID com o salt e gera um hash SHA-256
         hash_input = f"{self.google_id}{salt}"
         self.hash_id = hashlib.sha256(hash_input.encode()).hexdigest()

@@ -50,14 +50,21 @@ def callback():
         
         if not user:
             # Criar um novo usuário
-            user = User(
-                email=user_info['email'],
-                name=user_info.get('name', ''),
-                profile_pic=user_info.get('picture', ''),
-                google_id=user_info['sub']
-            )
-            db.session.add(user)
-            db.session.commit()
+            try:
+                user = User(
+                    email=user_info['email'],
+                    name=user_info.get('name', ''),
+                    profile_pic=user_info.get('picture', ''),
+                    google_id=user_info['sub']
+                )
+                db.session.add(user)
+                db.session.commit()
+            except ValueError as e:
+                # Log do erro crítico de configuração
+                current_app.logger.error(f"FALHA CRÍTICA DE SEGURANÇA: {e}")
+                # Mensagem para o usuário e redirecionamento
+                flash('Ocorreu um erro de configuração de segurança no servidor que impede a criação de novos usuários. Por favor, contate o administrador.', 'danger')
+                return redirect(url_for('main.index'))
         
         # Fazer login do usuário
         login_user(user)
